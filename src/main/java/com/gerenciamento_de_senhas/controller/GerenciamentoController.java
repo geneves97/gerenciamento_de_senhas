@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import com.gerenciamento_de_senhas.business.GerenciamentoBusiness;
 import com.gerenciamento_de_senhas.entity.GerenciamentoEntity;
@@ -39,5 +40,14 @@ public class GerenciamentoController {
 		List<GerenciamentoBusiness.DecryptedPassword> decryptedPasswords = gerenciamentoBusiness.findAllDecryptedSenhasById(userId);
 		return ResponseEntity.ok(decryptedPasswords);
 	}
-	
+
+	@DeleteMapping("/senha/{id}")
+	public ResponseEntity<String> deleteSenhaById(@PathVariable Integer id) {
+		try {
+			gerenciamentoBusiness.deleteSenhaById(id);
+			return ResponseEntity.ok("Senha excluída com sucesso.");
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Erro ao excluir a senha: " + e.getMessage());
+		}
+	}
 }
