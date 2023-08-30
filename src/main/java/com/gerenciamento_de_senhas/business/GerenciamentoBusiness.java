@@ -2,6 +2,7 @@ package com.gerenciamento_de_senhas.business;
 
 import java.nio.charset.StandardCharsets;
 import java.security.spec.KeySpec;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -63,6 +64,52 @@ public class GerenciamentoBusiness {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	public static String decryptSenha(String encryptedSenha) {
+		try {
+			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+			KeySpec spec = new PBEKeySpec(PASSWORD.toCharArray(), SALT.getBytes(), 10000, KEY_LENGTH);
+			SecretKeySpec secretKeySpec = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
+
+			Cipher cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+
+			byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedSenha));
+			return new String(decryptedBytes, StandardCharsets.UTF_8);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public List<DecryptedPassword> findAllDecryptedSenhasById(Integer userId) {
+		List<GerenciamentoEntity> senhas = usuarioBusiness.findAllSenhasById(userId);
+		List<DecryptedPassword> decryptedPasswords = new ArrayList<>();
+
+		for (GerenciamentoEntity senha : senhas) {
+			String decryptedSenha = decryptSenha(senha.getSenha());
+			DecryptedPassword decryptedPassword = new DecryptedPassword(senha, decryptedSenha);
+			decryptedPasswords.add(decryptedPassword);
+		}
+
+		return decryptedPasswords;
+	}
+	public class DecryptedPassword {
+		private GerenciamentoEntity senha;
+		private String decryptedSenha;
+
+		public DecryptedPassword(GerenciamentoEntity senha, String decryptedSenha) {
+			this.senha = senha;
+			this.decryptedSenha = decryptedSenha;
+		}
+
+		public GerenciamentoEntity getSenha() {
+			return senha;
+		}
+
+		public String getDecryptedSenha() {
+			return decryptedSenha;
 		}
 	}
 }

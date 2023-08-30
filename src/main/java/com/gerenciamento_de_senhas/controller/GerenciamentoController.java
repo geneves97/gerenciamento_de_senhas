@@ -3,6 +3,7 @@ package com.gerenciamento_de_senhas.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,12 @@ public class GerenciamentoController {
 	@PostMapping
 	public GerenciamentoEntity post(@RequestBody GerenciamentoEntity gerenciamentoEntity) throws Exception {
 		return  gerenciamentoBusiness.save(gerenciamentoEntity);
+	}
+
+	@GetMapping("/senhas-decrypted/{userId}")
+	public ResponseEntity<List<GerenciamentoBusiness.DecryptedPassword>> findAllDecryptedSenhasById(@PathVariable Integer userId) {
+		List<GerenciamentoBusiness.DecryptedPassword> decryptedPasswords = gerenciamentoBusiness.findAllDecryptedSenhasById(userId);
+		return ResponseEntity.ok(decryptedPasswords);
 	}
 	
 }
