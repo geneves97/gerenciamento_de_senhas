@@ -11,6 +11,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -110,6 +111,14 @@ public class GerenciamentoBusiness {
 
 		public String getDecryptedSenha() {
 			return decryptedSenha;
+		}
+	}
+	@Transactional
+	public void deleteSenhaById(Integer senhaId) {
+		GerenciamentoEntity senha = gerenciamentoRepository.findById(senhaId).orElse(null);
+
+		if (senha != null) {
+			gerenciamentoRepository.delete(senha);
 		}
 	}
 }
