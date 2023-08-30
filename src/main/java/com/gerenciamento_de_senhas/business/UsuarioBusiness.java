@@ -22,7 +22,7 @@ public class UsuarioBusiness {
 	private GerenciamentoRepository gerenciamentoRepository; // Injetar o GerenciamentoRepository corretamente
 
 
-	private static final int MAX_PASSWORDS_PER_USER = 3;
+	private static final int MAX_PASSWORDS_PER_USER = 20;
 
 	public UsuarioEntity save(UsuarioEntity usuarioEntity) throws Exception {
 		usuarioEntity.setNome(usuarioEntity.getNome());
